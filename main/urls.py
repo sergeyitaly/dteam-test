@@ -14,5 +14,6 @@ urlpatterns = [
     path('api/', include(router.urls)), 
     path('settings/', views.SettingsView.as_view(), name='settings-view'),
     path('cv/<int:pk>/send-email/', views.send_cv_email, name='send_cv_email'),
-
+    path('cv/<int:pk>/translate/', views.translate_cv, name='translate_cv'), 
+           
 ]
