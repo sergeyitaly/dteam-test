@@ -9,6 +9,13 @@
 </head>
 <body class="bg-light">
   <div class="container py-5">
+
+    {% if settings.DEBUG %}
+    <div class="alert alert-warning">
+      Debug mode is ON
+    </div>
+    {% endif %}
+    
     <div class="card shadow">
       <div class="card-header bg-primary text-white">
         <h1>{{ cv.first_name }} {{ cv.last_name }}</h1>
