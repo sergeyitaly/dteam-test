@@ -15,3 +15,6 @@ GET /api/cvs/{id}/ - Retrieve single CV
 PUT/PATCH /api/cvs/{id}/ - Update CV
 
 DELETE /api/cvs/{id}/ - Delete CV
+
+
+Check the logs on /admin/ with admin admin
