@@ -125,11 +125,21 @@ WantedBy=multi-user.target
 
 
 #tart gunicorn
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
+
 
 sudo nano /etc/nginx/sites-available/CVProject
 
 sudo ln -s /etc/nginx/sites-available/CVProject /etc/nginx/sites-enabled
 sudo nginx -t
+sudo systemctl restart nginx
+
+python manage.py collectstatic
+
+python manage.py migrate
+
+sudo systemctl restart gunicorn
 sudo systemctl restart nginx
