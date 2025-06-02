@@ -18,3 +18,17 @@ DELETE /api/cvs/{id}/ - Delete CV
 
 
 Check the logs on /admin/ with admin admin
+
+Check the settings on /settings/
+
+# Build containers
+docker-compose build
+
+# Run migrations
+docker-compose run web python manage.py migrate
+
+# Create superuser (optional)
+docker-compose run web python manage.py createsuperuser
+
+# Start all services
+docker-compose up
