@@ -3,3 +3,4 @@ venv/
 .env
 main/__pycache__
 CVProject/__pycache__
+audit/__pycache__
