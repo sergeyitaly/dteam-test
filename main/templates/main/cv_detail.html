@@ -15,7 +15,7 @@
       Debug mode is ON
     </div>
     {% endif %}
-    
+
     <div class="card shadow">
       <div class="card-header bg-primary text-white">
         <h1>{{ cv.first_name }} {{ cv.last_name }}</h1>
@@ -64,6 +64,26 @@
             <i class="bi bi-file-earmark-pdf"></i> Download CV_PDF
           </a>
   
+        </section>
+
+        <section>
+          <div class="card mt-4">
+            <div class="card-header">
+              <h3>Send PDF via Email</h3>
+            </div>
+            <div class="card-body">
+              <form method="post" action="{% url 'main:send_cv_email' cv.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-envelope"></i> Send PDF
+                </button>
+              </form>
+            </div>
+          </div>
         </section>
       </div>
     </div>

@@ -10,6 +10,19 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from .decorators import staff_required
 from django.utils.decorators import method_decorator
+from .tasks import send_cv_pdf_email
+from django.contrib import messages
+from django.shortcuts import redirect, get_object_or_404
+
+def send_cv_email(request, pk):
+    if request.method == 'POST':
+        email_to = request.POST.get('email')
+        task = send_cv_pdf_email.delay(pk, email_to)
+        messages.success(
+            request,
+            f"CV is being sent to {email_to}. Task ID: {task.id}"
+        )
+    return redirect('main:cv_detail', pk=pk)
 
 @method_decorator(staff_required, name='dispatch')
 class SettingsView(TemplateView):
