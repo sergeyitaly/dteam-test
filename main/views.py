@@ -6,7 +6,29 @@ from weasyprint import HTML
 import tempfile
 from rest_framework import viewsets
 from .serializers import CVSerializer
+from django.views.generic import TemplateView
+from django.conf import settings
+from .decorators import staff_required
+from django.utils.decorators import method_decorator
 
+@method_decorator(staff_required, name='dispatch')
+class SettingsView(TemplateView):
+    template_name = 'main/settings.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_settings'] = {
+            'DEBUG': settings.DEBUG,
+            'SECRET_KEY': '*****' if settings.SECRET_KEY else None,
+            'ALLOWED_HOSTS': settings.ALLOWED_HOSTS,
+            'DATABASES': settings.DATABASES,
+            'INSTALLED_APPS': settings.INSTALLED_APPS,
+            'MIDDLEWARE': settings.MIDDLEWARE,
+            'TEMPLATES': settings.TEMPLATES,
+        }
+        return context
+    
+    
 class CVViewSet(viewsets.ModelViewSet):
     queryset = CV.objects.all().prefetch_related('skills', 'projects')
     serializer_class = CVSerializer

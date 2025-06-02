@@ -1,0 +1,42 @@
+{% block content %}
+<div class="container">
+    <h1>Django Settings</h1>
+
+    {% if settings.DEBUG %}
+    <div class="alert alert-warning">
+      Debug mode is ON
+    </div>
+    {% endif %}
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Context Processor Settings (available in all templates)</h2>
+        </div>
+        <div class="card-body">
+            <pre>{{ settings|pprint }}</pre>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Full Settings View</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                {% for key, value in all_settings.items %}
+                <tr>
+                    <th>{{ key }}</th>
+                    <td>
+                        {% if value is iterable and value is not string %}
+                            <pre>{{ value|pprint }}</pre>
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

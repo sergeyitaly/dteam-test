@@ -13,8 +13,15 @@
     </style>
 </head>
 <body>
-    <h1>{{ cv.first_name }} {{ cv.last_name }}</h1>
+
+    {% if settings.DEBUG %}
+    <div class="alert alert-warning">
+      Debug mode is ON
+    </div>
+    {% endif %}
     
+    <h1>{{ cv.first_name }} {{ cv.last_name }}</h1>
+
     <div class="contact-info">
         <p><strong>Email:</strong> {{ cv.contacts.email }}</p>
         <p><strong>Phone:</strong> {{ cv.contacts.phone }}</p>
