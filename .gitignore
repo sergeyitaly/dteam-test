@@ -4,3 +4,4 @@ venv/
 main/__pycache__
 CVProject/__pycache__
 audit/__pycache__
+staticfiles/

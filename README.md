@@ -22,7 +22,12 @@ Check the logs on /admin/ with admin admin
 Check the settings on /settings/
 
 # Build containers
-docker-compose build
+docker-compose build 
+
+or
+
+docker-compose up -d --build
+
 
 # Run migrations
 docker-compose run web python manage.py migrate
@@ -32,3 +37,8 @@ docker-compose run web python manage.py createsuperuser
 
 # Start all services
 docker-compose up
+
+
+#Start celery and redis
+celery -A CVProject  worker --loglevel=info
+brew services start redis
