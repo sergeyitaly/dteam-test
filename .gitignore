@@ -1,0 +1,5 @@
+test.txt
+venv/
+.env
+main/__pycache__
+CVProject/__pycache__
