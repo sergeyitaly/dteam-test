@@ -4,6 +4,12 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
 import tempfile
+from rest_framework import viewsets
+from .serializers import CVSerializer
+
+class CVViewSet(viewsets.ModelViewSet):
+    queryset = CV.objects.all().prefetch_related('skills', 'projects')
+    serializer_class = CVSerializer
 
 def cv_pdf(request, pk):
     cv = get_object_or_404(CV, pk=pk)
