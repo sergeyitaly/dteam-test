@@ -1,9 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import CV
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
-import tempfile
 from rest_framework import viewsets
 from .serializers import CVSerializer
 from django.views.generic import TemplateView
@@ -12,7 +11,64 @@ from .decorators import staff_required
 from django.utils.decorators import method_decorator
 from .tasks import send_cv_pdf_email
 from django.contrib import messages
-from django.shortcuts import redirect, get_object_or_404
+import openai
+from django.http import JsonResponse
+import logging
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import openai
+
+logger = logging.getLogger(__name__)
+
+@csrf_exempt 
+def translate_cv(request, pk):
+    if request.method == 'POST':
+        try:
+            cv = CV.objects.get(pk=pk)
+            target_language = request.POST.get('language')
+            
+            text_to_translate = f"""
+            CV of {cv.first_name} {cv.last_name}
+            Bio: {cv.bio}
+            Skills: {', '.join(skill.name for skill in cv.skills.all())}
+            Projects: {' | '.join(f"{p.title}: {p.description}" for p in cv.projects.all())}
+            """
+            
+            openai.api_key = settings.OPENAI_API_KEY
+            response = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": f"You are a professional translator. Translate the following CV content to {target_language}."},
+                    {"role": "user", "content": text_to_translate}
+                ],
+                temperature=0.3,
+            )
+
+            translated_text = response.choices[0].message.content
+            return JsonResponse({'translation': translated_text})
+        
+        except openai.RateLimitError as e:
+            logger.error(f"OpenAI Rate Limit Error: {e}")
+            return JsonResponse({
+                'error': 'Translation service quota exceeded. Please try again later or contact support.',
+                'details': str(e)
+            }, status=429)
+            
+        except openai.AuthenticationError as e:
+            logger.error(f"OpenAI Authentication Error: {e}")
+            return JsonResponse({
+                'error': 'Authentication failed with translation service.',
+                'details': str(e)
+            }, status=401)
+            
+        except Exception as e:
+            logger.error(f"Translation error: {e}", exc_info=True)
+            return JsonResponse({
+                'error': 'An unexpected error occurred during translation.',
+                'details': str(e)
+            }, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 def send_cv_email(request, pk):
     if request.method == 'POST':
