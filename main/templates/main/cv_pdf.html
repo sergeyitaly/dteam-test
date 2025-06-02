@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ cv.first_name }} {{ cv.last_name }} - CV</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; }
+        h2 { color: #2980b9; }
+        .section { margin-bottom: 20px; }
+        .contact-info { margin-bottom: 30px; }
+        .skill { display: inline-block; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>{{ cv.first_name }} {{ cv.last_name }}</h1>
+    
+    <div class="contact-info">
+        <p><strong>Email:</strong> {{ cv.contacts.email }}</p>
+        <p><strong>Phone:</strong> {{ cv.contacts.phone }}</p>
+        {% if cv.contacts.github %}
+        <p><strong>GitHub:</strong> {{ cv.contacts.github }}</p>
+        {% endif %}
+    </div>
+    
+    <div class="section">
+        <h2>Bio</h2>
+        <p>{{ cv.bio }}</p>
+    </div>
+    
+    <div class="section">
+        <h2>Skills</h2>
+        {% for skill in cv.skills.all %}
+        <span class="skill">{{ skill.name }} ({{ skill.proficiency }}/5)</span>
+        {% endfor %}
+    </div>
+    
+    <div class="section">
+        <h2>Projects</h2>
+        {% for project in cv.projects.all %}
+        <h3>{{ project.title }} ({{ project.year }})</h3>
+        <p>{{ project.description }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
