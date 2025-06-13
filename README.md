@@ -109,16 +109,18 @@ pip install gunicorn
 
 # Create systemd service
 sudo nano /etc/systemd/system/gunicorn.service
-
 [Unit]
 Description=gunicorn daemon
 After=network.target
 
 [Service]
+Environment="ALLOWED_HOSTS=127.0.0.1 your_domain ip"
+EnvironmentFile=/home/django/app/.env
+
 User=django
 Group=www-data
 WorkingDirectory=/home/django/app
-ExecStart=/home/django/app/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/django/app/app.sock CVProject.wsgi:application
+ExecStart=/home/django/app/venv/bin/gunicorn --access-logfile - --workers 1 --bind unix:/home/django/app/gunicorn.sock CVProject.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
@@ -133,6 +135,25 @@ sudo systemctl enable gunicorn
 
 sudo nano /etc/nginx/sites-available/CVProject
 
+server {
+    listen 80;
+    server_name your_domain.com your_server_ip;
+    
+    location /static/ {
+            alias /home/django/app/CVProject/staticfiles/;
+            expires 30d;
+            add_header Cache-Control "public";
+        }
+
+
+        location / {
+            proxy_pass http://unix:/home/django/app/gunicorn.sock;
+            include proxy_params;
+        }
+
+}
+
+
 sudo ln -s /etc/nginx/sites-available/CVProject /etc/nginx/sites-enabled
 sudo nginx -t
 sudo systemctl restart nginx
@@ -143,3 +164,5 @@ python manage.py migrate
 
 sudo systemctl restart gunicorn
 sudo systemctl restart nginx
+sudo journalctl -u gunicorn --no-pager -n 50
+
